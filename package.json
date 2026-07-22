@@ -15,5 +15,8 @@
     "@types/node": "^26.1.1",
     "prettier": "^3.9.6",
     "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "pino": "^10.3.1"
   }
 }
