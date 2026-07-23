@@ -17,6 +17,9 @@
     "typescript": "^7.0.2"
   },
   "dependencies": {
+    "@nodable/sax": "^1.2.1",
+    "fast-xml-parser": "^5.10.1",
+    "fast-xml-validator": "^1.4.0",
     "pino": "^10.3.1"
   }
 }
