@@ -3,11 +3,33 @@ import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
 
 import { AppModule } from "./app.module.js";
+import { config } from "./config.js";
+import { logger } from "./logger.js";
 
 const bootstrap = async () => {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: false,
+  });
 
-  await app.listen(4000);
+  app.enableShutdownHooks();
+  await app.listen(config.port);
+
+  logger.info(
+    {
+      port: config.port,
+      environment: config.environment,
+    },
+    "NestJS server started",
+  );
 };
 
-void bootstrap();
+bootstrap().catch((err: unknown) => {
+  logger.fatal(
+    {
+      err,
+    },
+    "NestJS server failed to start",
+  );
+
+  process.exitCode = 1;
+});

@@ -26,3 +26,12 @@ Early stage of development.
 npm install
 npm run build
 npm start
+```
+
+### Environment variables
+
+# Application environment
+
+- NODE_ENV
+- PORT
+- LOG_LEVEL

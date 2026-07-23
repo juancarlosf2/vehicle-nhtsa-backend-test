@@ -1,4 +1,7 @@
 import { Module } from "@nestjs/common";
+import { AppLifecycleSerice } from "./app-lifecycle.service.js";
 
-@Module({})
+@Module({
+  providers: [AppLifecycleSerice],
+})
 export class AppModule {}
