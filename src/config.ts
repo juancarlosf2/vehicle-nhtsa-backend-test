@@ -12,4 +12,7 @@ export const config = {
   vehicleTypesUrl:
     process.env.VEHICLE_TYPES_URL ??
     "https://vpic.nhtsa.dot.gov/api/vehicles/GetVehicleTypesForMakeId",
+  databasePath: process.env.DATABASE_PATH ?? "./data/vehicles.db",
+
+  migrationsPath: process.env.MIGRATIONS_PATH ?? "./drizzle",
 };

@@ -1,13 +1,9 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { Make, parseMakesXml, parseVehicleTypesXml } from "../xml.js";
+import { parseMakesXml, parseVehicleTypesXml } from "../xml.js";
 import { logger } from "../logger.js";
 import { FetchLike, NHTSA_FETCH } from "./constants.js";
 import { config } from "../config.js";
-
-export interface VehicleData {
-  makes: Make[];
-  ingestedAt: string;
-}
+import { Make, VehicleData } from "../vehicles/vehicle.types.js";
 
 @Injectable()
 export class NhtsaService {

@@ -1,17 +1,6 @@
 import { SaxParser } from "@nodable/sax";
 import { SyntaxValidator } from "fast-xml-validator";
 
-export interface VehicleType {
-  id: number;
-  name: string;
-}
-
-export interface Make {
-  id: number;
-  name: string;
-  vehicleTypes: VehicleType[];
-}
-
 type Row = Record<string, string>;
 
 const validateXml = (xml: string) => {
