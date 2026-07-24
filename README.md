@@ -41,3 +41,18 @@ npm start
 - makes | Stores NHTSA vehicle manufacturers
 - vehicle_types | Stores vehicle types associated with each make
 - ingestion_runs | This one records successful ingestion timestamps
+
+The following query is available through POST /graphql
+
+```graphql
+query GetMakes($makeId: Int, $limit: Int = 100, $offset: Int = 0) {
+  makes(makeId: $makeId, limit: $limit, offset: $offset) {
+    id
+    name
+    vehicleTypes {
+      id
+      name
+    }
+  }
+}
+```
