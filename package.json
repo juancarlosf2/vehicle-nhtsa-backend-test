@@ -11,12 +11,17 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main.js",
-    "test": "npm run build && node --test dist/test/**/*.test.js"
+    "test": "npm run build && node --test dist/test/**/*.test.js",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.24",
     "@nestjs/testing": "^11.1.28",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^26.1.1",
+    "drizzle-kit": "^0.31.10",
     "prettier": "^3.9.6",
     "typescript": "^6.0.3"
   },
@@ -25,6 +30,8 @@
     "@nestjs/core": "^11.1.28",
     "@nestjs/platform-express": "^11.1.28",
     "@nodable/sax": "^1.2.1",
+    "better-sqlite3": "^13.0.1",
+    "drizzle-orm": "^0.45.2",
     "fast-xml-parser": "^5.10.1",
     "fast-xml-validator": "^1.4.0",
     "pino": "^10.3.1",

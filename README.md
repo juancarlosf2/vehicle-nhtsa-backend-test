@@ -35,3 +35,9 @@ npm start
 - NODE_ENV
 - PORT
 - LOG_LEVEL
+
+### Database Model
+
+- makes | Stores NHTSA vehicle manufacturers
+- vehicle_types | Stores vehicle types associated with each make
+- ingestion_runs | This one records successful ingestion timestamps
