@@ -11,10 +11,11 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main.js",
-    "test": "nest build && node --test dist/test/**/*.test.js"
+    "test": "npm run build && node --test dist/test/**/*.test.js"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.24",
+    "@nestjs/testing": "^11.1.28",
     "@types/node": "^26.1.1",
     "prettier": "^3.9.6",
     "typescript": "^6.0.3"
