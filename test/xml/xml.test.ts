@@ -33,3 +33,7 @@ test("parses vehicle type", () => {
 
   assert.deepEqual(parseVehicleTypesXml(xml), [{ id: 1, name: "Car" }]);
 });
+
+test("rejects malformed XML", () => {
+  assert.throws(() => parseMakesXml("<Response>"), /Invalid XML/);
+});

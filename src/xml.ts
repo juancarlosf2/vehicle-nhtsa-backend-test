@@ -1,9 +1,11 @@
 import { SaxParser } from "@nodable/sax";
 import { SyntaxValidator } from "fast-xml-validator";
 
+import type { Make, VehicleType } from "./vehicles/vehicle.types.js";
+
 type Row = Record<string, string>;
 
-const validateXml = (xml: string) => {
+const validateXml = (xml: string): void => {
   try {
     const result = SyntaxValidator.validate(xml);
 
@@ -12,13 +14,21 @@ const validateXml = (xml: string) => {
       throw new Error(`Invalid XML at ${line}:${col}: ${msg}`);
     }
   } catch (error) {
+    if (error instanceof Error && error.message.startsWith("Invalid XML at")) {
+      throw error;
+    }
+
     const message = error instanceof Error ? error.message : String(error);
 
-    throw new Error(`Invalid XML ${message}`, { cause: error });
+    throw new Error(`Invalid XML: ${message}`, { cause: error });
   }
 };
 
-const extractRows = (xml: string, rowElement: string, fields: string[]) => {
+const extractRows = (
+  xml: string,
+  rowElement: string,
+  fields: readonly string[],
+): Row[] => {
   validateXml(xml);
 
   const rows: Row[] = [];
@@ -70,7 +80,9 @@ const makeDict = {
   MAKE_NAME: "Make_Name",
 } as const;
 
-export const parseMakesXml = (xml: string) => {
+export const parseMakesXml = (
+  xml: string,
+): Array<Omit<Make, "vehicleTypes">> => {
   return extractRows(xml, makeDict.ALL_VEHICLE_MAKES, [
     makeDict.MAKE_ID,
     makeDict.MAKE_NAME,
@@ -89,9 +101,9 @@ const vehicleDict = {
   VEHICLE_TYPES_FOR_MAKE_IDS: "VehicleTypesForMakeIds",
   VEHICLE_TYPE_ID: "VehicleTypeId",
   VEHICLE_TYPE_NAME: "VehicleTypeName",
-};
+} as const;
 
-export const parseVehicleTypesXml = (xml: string) => {
+export const parseVehicleTypesXml = (xml: string): VehicleType[] => {
   return extractRows(xml, vehicleDict.VEHICLE_TYPES_FOR_MAKE_IDS, [
     vehicleDict.VEHICLE_TYPE_ID,
     vehicleDict.VEHICLE_TYPE_NAME,

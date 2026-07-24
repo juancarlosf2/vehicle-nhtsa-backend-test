@@ -1,19 +1,42 @@
+import { loadEnvFile } from "node:process";
+import { z } from "zod";
+
+try {
+  loadEnvFile();
+} catch {
+  // A local .env file is optional.
+}
+
+const environment = z
+  .object({
+    PORT: z.coerce.number().default(4000),
+    NODE_ENV: z.string().default("development"),
+    LOG_LEVEL: z.string().default("info"),
+    REQUEST_TIMEOUT_MS: z.coerce.number().default(15_000),
+    VEHICLE_TYPES_CONCURRENCY: z.coerce.number().int().positive().default(25),
+    MAKES_URL: z
+      .string()
+      .default(
+        "https://vpic.nhtsa.dot.gov/api/vehicles/getallmakes?format=XML",
+      ),
+    VEHICLE_TYPES_URL: z
+      .string()
+      .default(
+        "https://vpic.nhtsa.dot.gov/api/vehicles/GetVehicleTypesForMakeId",
+      ),
+    DATABASE_PATH: z.string().default("./data/vehicles.db"),
+    MIGRATIONS_PATH: z.string().default("./drizzle"),
+  })
+  .parse(process.env);
+
 export const config = {
-  port: Number(process.env.PORT ?? 4000),
-  environment: process.env.NODE_ENV ?? "development",
-  logLevel: process.env.LOG_LEVEL ?? "info",
-  requestTimeoutMs: Number(process.env.REQUEST_TIMEOUT_MS ?? 15_000),
-  vehicleTypesConcurrency: Number(process.env.VEHICLE_TYPES_CONCURRENCY ?? 25),
-
-  // for the test purposes I am submitting the real URL but I will patch this in a future commit after the test review is done
-  makesUrl:
-    process.env.MAKES_URL ??
-    "https://vpic.nhtsa.dot.gov/api/vehicles/getallmakes?format=XML",
-
-  vehicleTypesUrl:
-    process.env.VEHICLE_TYPES_URL ??
-    "https://vpic.nhtsa.dot.gov/api/vehicles/GetVehicleTypesForMakeId",
-  databasePath: process.env.DATABASE_PATH ?? "./data/vehicles.db",
-
-  migrationsPath: process.env.MIGRATIONS_PATH ?? "./drizzle",
+  port: environment.PORT,
+  environment: environment.NODE_ENV,
+  logLevel: environment.LOG_LEVEL,
+  requestTimeoutMs: environment.REQUEST_TIMEOUT_MS,
+  vehicleTypesConcurrency: environment.VEHICLE_TYPES_CONCURRENCY,
+  makesUrl: environment.MAKES_URL,
+  vehicleTypesUrl: environment.VEHICLE_TYPES_URL,
+  databasePath: environment.DATABASE_PATH,
+  migrationsPath: environment.MIGRATIONS_PATH,
 };

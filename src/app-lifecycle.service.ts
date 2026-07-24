@@ -2,8 +2,8 @@ import { Injectable, OnApplicationShutdown } from "@nestjs/common";
 import { logger } from "./logger.js";
 
 @Injectable()
-export class AppLifecycleSerice implements OnApplicationShutdown {
+export class AppLifecycleService implements OnApplicationShutdown {
   onApplicationShutdown(signal?: string): void {
-    logger.info({ signal: signal ?? "unknown" }, "NestyJS server stopped");
+    logger.info({ signal: signal ?? "unknown" }, "NestJS server stopped");
   }
 }

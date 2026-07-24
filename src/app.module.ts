@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { AppLifecycleSerice } from "./app-lifecycle.service.js";
+import { AppLifecycleService } from "./app-lifecycle.service.js";
 import { VehiclesModule } from "./vehicles/vehicles.module.js";
 import { GraphQLModule } from "@nestjs/graphql";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
@@ -15,6 +15,6 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
     }),
     VehiclesModule,
   ],
-  providers: [AppLifecycleSerice],
+  providers: [AppLifecycleService],
 })
 export class AppModule {}
