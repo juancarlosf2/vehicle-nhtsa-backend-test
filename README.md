@@ -62,3 +62,43 @@ query GetMakes($makeId: Int, $limit: Int = 100, $offset: Int = 0) {
   }
 }
 ```
+
+### Docker
+
+Build the production image:
+
+```sh
+docker compose build
+```
+
+Populate the persistent SQLite volume. NHTSA currently returns more than
+12,000 makes, so this command can take several minutes:
+
+```sh
+docker compose run --rm api npm run ingest
+```
+
+Start the GraphQL service:
+
+```sh
+docker compose up
+```
+
+The endpoint is available at `http://localhost:4000/graphql`. The named
+`vehicle-data` volume keeps the SQLite database between container restarts.
+
+Stop the service with:
+
+```sh
+docker compose down
+```
+
+Use `docker compose down --volumes` only when you intentionally want to delete
+the persisted database.
+
+### Continuous integration
+
+The GitHub Actions workflow runs on pushes to `main` and pull requests. It
+installs dependencies from the lockfile, runs ESLint, checks formatting, runs
+the test suite, builds the Docker image, and uploads the compiled application
+and Drizzle migrations as an artifact.

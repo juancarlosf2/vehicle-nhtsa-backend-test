@@ -1,0 +1,21 @@
+services:
+  api:
+    build:
+      context: .
+    init: true
+    ports:
+      - "${PORT:-4000}:4000"
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      REQUEST_TIMEOUT_MS: ${REQUEST_TIMEOUT_MS:-15000}
+      VEHICLE_TYPES_CONCURRENCY: ${VEHICLE_TYPES_CONCURRENCY:-25}
+      DATABASE_PATH: /app/data/vehicles.db
+      MIGRATIONS_PATH: /app/drizzle
+    volumes:
+      - vehicle-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  vehicle-data:
