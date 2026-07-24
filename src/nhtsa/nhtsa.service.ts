@@ -20,18 +20,34 @@ export class NhtsaService {
     const makesXml = await this.getXml(config.makesUrl);
 
     const makes = parseMakesXml(makesXml);
+    const completeMakes: Make[] = [];
 
-    const makesPromise = async (make: Omit<Make, "vehicleTypes">) => {
-      const url = `${config.vehicleTypesUrl}/${make.id}?format=xml`;
+    for (
+      let index = 0;
+      index < makes.length;
+      index += config.vehicleTypesConcurrency
+    ) {
+      const batch = makes.slice(index, index + config.vehicleTypesConcurrency);
 
-      const vehicleTypesXml = await this.getXml(url);
+      const completedBatch = await Promise.all(
+        batch.map((make) => this.fetchMakeVehicleTypes(make)),
+      );
 
-      return {
-        ...make,
-        vehicleTypes: parseVehicleTypesXml(vehicleTypesXml),
-      };
-    };
-    const completeMakes = await Promise.all(makes.map(makesPromise));
+      completeMakes.push(...completedBatch);
+
+      if (
+        completeMakes.length % 500 === 0 ||
+        completeMakes.length === makes.length
+      ) {
+        this.logger.info(
+          {
+            processedMakes: completeMakes.length,
+            totalMakes: makes.length,
+          },
+          "Vehicle type ingestion progress",
+        );
+      }
+    }
 
     return {
       makes: completeMakes,
@@ -39,7 +55,19 @@ export class NhtsaService {
     };
   }
 
-  private async getXml(url: string) {
+  private async fetchMakeVehicleTypes(
+    make: Omit<Make, "vehicleTypes">,
+  ): Promise<Make> {
+    const url = `${config.vehicleTypesUrl}/${make.id}?format=xml`;
+    const vehicleTypesXml = await this.getXml(url);
+
+    return {
+      ...make,
+      vehicleTypes: parseVehicleTypesXml(vehicleTypesXml),
+    };
+  }
+
+  private async getXml(url: string): Promise<string> {
     const controller = new AbortController();
 
     const timeout = setTimeout(() => {

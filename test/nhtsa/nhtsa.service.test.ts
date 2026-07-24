@@ -3,6 +3,7 @@ import test from "node:test";
 
 import { Test } from "@nestjs/testing";
 
+import { config } from "../../src/config.js";
 import { NHTSA_FETCH, type FetchLike } from "../../src/nhtsa/constants.js";
 import { NhtsaService } from "../../src/nhtsa/nhtsa.service.js";
 
@@ -74,6 +75,65 @@ test("downloads and combines NHTSA data", async () => {
 
   assert.equal(requestedUrls.length, 2);
   assert.match(result.ingestedAt, /^\d{4}-\d{2}-\d{2}T/);
+
+  await testingModule.close();
+});
+
+test("limits concurrent vehicle type requests", async () => {
+  const makeCount = config.vehicleTypesConcurrency * 2 + 1;
+  const manyMakesXml = `
+    <Response>
+      <Results>
+        ${Array.from(
+          { length: makeCount },
+          (_, index) => `
+            <AllVehicleMakes>
+              <Make_ID>${index + 1}</Make_ID>
+              <Make_Name>Make ${index + 1}</Make_Name>
+            </AllVehicleMakes>
+          `,
+        ).join("")}
+      </Results>
+    </Response>
+  `;
+
+  let activeRequests = 0;
+  let peakActiveRequests = 0;
+
+  const fetchMock = (async (input) => {
+    const url = input.toString();
+
+    if (url.includes("getallmakes")) {
+      return new Response(manyMakesXml, { status: 200 });
+    }
+
+    activeRequests += 1;
+    peakActiveRequests = Math.max(peakActiveRequests, activeRequests);
+
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    activeRequests -= 1;
+
+    return new Response(vehicleTypesXml, { status: 200 });
+  }) as FetchLike;
+
+  const testingModule = await Test.createTestingModule({
+    providers: [
+      NhtsaService,
+      {
+        provide: NHTSA_FETCH,
+        useValue: fetchMock,
+      },
+    ],
+  }).compile();
+
+  const service = testingModule.get(NhtsaService);
+  const result = await service.fetchVehicleData();
+
+  assert.equal(result.makes.length, makeCount);
+  assert.ok(
+    peakActiveRequests <= config.vehicleTypesConcurrency,
+    `Expected at most ${config.vehicleTypesConcurrency} concurrent requests, received ${peakActiveRequests}`,
+  );
 
   await testingModule.close();
 });

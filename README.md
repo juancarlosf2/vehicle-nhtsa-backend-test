@@ -25,8 +25,13 @@ Early stage of development.
 ```sh
 npm install
 npm run build
+npm run ingest
 npm start
 ```
+
+The ingestion command can take several minutes because NHTSA currently
+returns more than 12,000 makes. Vehicle-type requests run in bounded batches,
+and progress is logged every 500 makes.
 
 ### Environment variables
 
@@ -35,6 +40,7 @@ npm start
 - NODE_ENV
 - PORT
 - LOG_LEVEL
+- VEHICLE_TYPES_CONCURRENCY (defaults to 10)
 
 ### Database Model
 
