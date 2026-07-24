@@ -3,8 +3,8 @@ import test from "node:test";
 
 import { Test } from "@nestjs/testing";
 
-import { NHTSA_FETCH, type FetchLike } from "../src/nhtsa/constants.js";
-import { NhtsaService } from "../src/nhtsa/nhtsa.service.js";
+import { NHTSA_FETCH, type FetchLike } from "../../src/nhtsa/constants.js";
+import { NhtsaService } from "../../src/nhtsa/nhtsa.service.js";
 
 const makesXml = `
   <Response>

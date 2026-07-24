@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { parseMakesXml, parseVehicleTypesXml } from "../src/xml.js";
+import { parseMakesXml, parseVehicleTypesXml } from "../../src/xml.js";
 
 test("parses vehicle makes", () => {
   const xml = `
